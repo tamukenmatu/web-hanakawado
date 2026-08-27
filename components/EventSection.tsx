@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Calendar, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar, Sparkles, X, ZoomIn } from "lucide-react";
 
 interface EventItem {
   id: string;
@@ -14,6 +14,27 @@ interface EventItem {
 }
 
 export default function EventSection() {
+  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+
+  // ESCキーでモーダルを閉じる
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedEvent(null);
+      }
+    };
+    if (selectedEvent) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedEvent]);
+
   const events: EventItem[] = [
     {
       id: "hotaru",
@@ -57,7 +78,7 @@ export default function EventSection() {
           </h2>
           <div className="w-16 h-0.5 bg-primary mx-auto mt-4" />
           <p className="text-gray-500 mt-4 text-sm sm:text-base">
-            四季折々の風情と活気を感じる、花川戸のイベント
+            四季折々の風情と活気を感じる、花川戸のイベント（画像をクリックして拡大）
           </p>
         </motion.div>
 
@@ -72,7 +93,18 @@ export default function EventSection() {
               whileHover={{ y: -6 }}
               className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col group"
             >
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
+              <div
+                onClick={() => setSelectedEvent(event)}
+                className="relative aspect-[1/1.414] w-full overflow-hidden bg-gray-100 cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label={`${event.title}の画像を拡大表示`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setSelectedEvent(event);
+                  }
+                }}
+              >
                 <Image
                   src={event.image}
                   alt={event.title}
@@ -80,9 +112,17 @@ export default function EventSection() {
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
-                <span className="absolute top-3 right-3 bg-primary/90 text-white text-xs font-semibold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                <span className="absolute top-3 right-3 bg-primary/90 text-white text-xs font-semibold px-2.5 py-1 rounded-md backdrop-blur-sm z-10">
                   {event.tag}
                 </span>
+
+                {/* ホバー時の拡大アイコン案内 */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                  <div className="bg-black/60 text-white px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 backdrop-blur-sm shadow-md">
+                    <ZoomIn size={14} />
+                    <span>クリックして拡大</span>
+                  </div>
+                </div>
               </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div>
@@ -102,6 +142,50 @@ export default function EventSection() {
           ))}
         </div>
       </div>
+
+      {/* インラインモーダル（ポップアップブロッカーの影響を受けないDOM内オーバーレイ） */}
+      <AnimatePresence>
+        {selectedEvent && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setSelectedEvent(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/60 backdrop-blur-xl backdrop-saturate-150 cursor-zoom-out"
+          >
+            {/* グラスモーフィズム装飾（ほのかな光のグラデーション反射レイヤー） */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/40 pointer-events-none" />
+
+            {/* 閉じるボタン（グラスモーフィズムスタイル） */}
+            <button
+              onClick={() => setSelectedEvent(null)}
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/20 p-2.5 rounded-full backdrop-blur-md transition-all z-20 shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50 group"
+              aria-label="閉じる"
+            >
+              <X size={24} className="transition-transform group-hover:scale-110" />
+            </button>
+
+            {/* モーダル画像コンテンツ（余分な枠なしで画像そのものがポップアップ） */}
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.85, opacity: 0, y: 10 }}
+              transition={{ type: "spring", damping: 28, stiffness: 320 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative inline-flex items-center justify-center max-w-[90vw] max-h-[90vh] cursor-default"
+            >
+              {/* ポスター画像そのもの */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={selectedEvent.image}
+                alt={selectedEvent.title}
+                className="max-w-[90vw] max-h-[90vh] w-auto h-auto object-contain rounded-xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)]"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

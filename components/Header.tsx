@@ -35,8 +35,15 @@ export default function Header() {
     setMobileMenuOpen(false);
     const target = document.querySelector(href);
     if (target) {
-      const top = target.getBoundingClientRect().top + window.scrollY - 70;
-      window.scrollTo({ top, behavior: "smooth" });
+      const header = document.querySelector("header");
+      const headerHeight = header ? header.getBoundingClientRect().height : 70;
+      const targetPosition = target.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = targetPosition - headerHeight - 16;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     }
   };
 
