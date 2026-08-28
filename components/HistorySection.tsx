@@ -13,20 +13,106 @@ export default function HistorySection() {
 
       <div className="max-w-5xl mx-auto px-6 sm:px-8 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false, amount: 0.35 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs tracking-widest uppercase bg-primary/10 text-primary font-semibold mb-3">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.35 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs tracking-widest uppercase bg-primary/10 text-primary font-semibold mb-4"
+          >
             <History size={14} />
             <span>History</span>
+          </motion.div>
+
+          {/* タイトル：視界に入るたびに広範囲から光粒子がスローに集結し、文字がバウンド着地 */}
+          <div className="relative inline-block py-4 px-6">
+            {/* スローに集まる和モダン・キラメキパーティクル */}
+            <div className="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center">
+              {[
+                { x: -140, y: -60, delay: 0.1, size: "w-2.5 h-2.5", color: "bg-amber-400" },
+                { x: 130, y: -70, delay: 0.25, size: "w-2 h-2", color: "bg-primary" },
+                { x: -160, y: 40, delay: 0.2, size: "w-2 h-2", color: "bg-secondary" },
+                { x: 150, y: 50, delay: 0.35, size: "w-2.5 h-2.5", color: "bg-amber-500" },
+                { x: -70, y: -90, delay: 0.15, size: "w-1.5 h-1.5", color: "bg-amber-300" },
+                { x: 80, y: -85, delay: 0.3, size: "w-2 h-2", color: "bg-primary/70" },
+                { x: -80, y: 80, delay: 0.4, size: "w-1.5 h-1.5", color: "bg-secondary/80" },
+                { x: 60, y: 75, delay: 0.2, size: "w-2 h-2", color: "bg-amber-400" },
+                { x: 0, y: -110, delay: 0.05, size: "w-3 h-3", color: "bg-amber-400" },
+                { x: 0, y: 90, delay: 0.45, size: "w-2 h-2", color: "bg-primary" },
+              ].map((p, idx) => (
+                <motion.span
+                  key={idx}
+                  initial={{
+                    opacity: 0,
+                    scale: 0.2,
+                    x: p.x * 2.2,
+                    y: p.y * 2.2,
+                    filter: "blur(8px)"
+                  }}
+                  whileInView={{
+                    opacity: [0, 1, 0.9, 0],
+                    scale: [0.2, 1.8, 1.2, 0],
+                    x: [p.x * 2.2, p.x * 0.9, p.x * 0.2, 0],
+                    y: [p.y * 2.2, p.y * 0.9, p.y * 0.2, 0],
+                    filter: ["blur(6px)", "blur(0px)", "blur(1px)", "blur(0px)"]
+                  }}
+                  viewport={{ once: false, amount: 0.35 }}
+                  transition={{
+                    duration: 1.8,
+                    delay: p.delay,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className={`absolute rounded-full ${p.size} ${p.color} shadow-lg shadow-amber-400/30`}
+                />
+              ))}
+            </div>
+
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-[0.22em] flex items-center justify-center flex-wrap gap-1.5">
+              {"花川戸の歴史".split("").map((char, i) => (
+                <motion.span
+                  key={i}
+                  initial={{
+                    opacity: 0,
+                    scale: 2.2,
+                    filter: "blur(16px)",
+                    y: i % 2 === 0 ? -50 : 50,
+                    rotate: (i - 2) * 12
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    scale: 1,
+                    filter: "blur(0px)",
+                    y: 0,
+                    rotate: 0
+                  }}
+                  viewport={{ once: false, amount: 0.35 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 120,
+                    damping: 12,
+                    mass: 0.9,
+                    delay: 0.25 + i * 0.12,
+                  }}
+                  className="inline-block relative bg-gradient-to-br from-gray-950 via-gray-800 to-primary bg-clip-text text-transparent drop-shadow-md hover:scale-110 transition-transform duration-300 cursor-default"
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </h2>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-gray-900 tracking-wider">
-            花川戸の歴史
-          </h2>
-          <div className="w-16 h-0.5 bg-primary mx-auto mt-4" />
+
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: false, amount: 0.35 }}
+            transition={{ duration: 1.0, delay: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            className="w-24 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-5"
+          />
         </motion.div>
 
         <motion.div

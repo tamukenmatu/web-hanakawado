@@ -121,6 +121,8 @@ const jsonLd = {
   ],
 };
 
+import WashiTextureOverlay from "@/components/WashiTextureOverlay";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -134,7 +136,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="font-sans antialiased bg-bgLight text-[#2c2c2c] min-h-screen flex flex-col selection:bg-primary selection:text-white">
+      <body className="font-sans antialiased bg-bgLight text-[#2c2c2c] min-h-screen flex flex-col selection:bg-primary selection:text-white relative">
+        <WashiTextureOverlay />
         {children}
       </body>
     </html>

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin,
   ExternalLink,
@@ -239,7 +239,7 @@ export default function MapSection() {
         </motion.div>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+        <div className="flex flex-wrap items-center justify-center gap-2.5 mb-10">
           {[
             { id: "all", label: "すべての店舗" },
             { id: "food", label: "飲食・カフェ" },
@@ -249,79 +249,101 @@ export default function MapSection() {
             <button
               key={tab.id}
               onClick={() => setActiveCategory(tab.id as any)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`relative px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 z-10 ${
                 activeCategory === tab.id
-                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-105"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "text-white"
+                  : "text-gray-600 hover:text-gray-900 bg-gray-100/80 hover:bg-gray-200/80"
               }`}
             >
+              {activeCategory === tab.id && (
+                <motion.div
+                  layoutId="activeTabPill"
+                  className="absolute inset-0 bg-primary rounded-full -z-10 shadow-md shadow-primary/30"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
               {tab.label}
             </button>
           ))}
         </div>
 
-        {/* Store Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredStores.map((store) => {
-            const hasLink = !!store.url;
-            const content = (
-              <div
-                className={`p-4 rounded-xl border transition-all duration-200 flex items-center justify-between gap-3 ${
-                  hasLink
-                    ? "bg-white hover:border-primary/50 hover:shadow-md border-gray-200 cursor-pointer group"
-                    : "bg-gray-50 border-gray-200 text-gray-400"
-                }`}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                      store.number === 25
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-primary/10 text-primary"
-                    }`}
-                  >
-                    {store.number}
-                  </span>
-                  <span
-                    className={`text-sm font-medium truncate ${
-                      hasLink
-                        ? "text-gray-800 group-hover:text-primary transition-colors"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {store.name}
-                  </span>
-                </div>
-
-                {hasLink && (
-                  <div className="flex items-center gap-1 shrink-0">
-                    <span className="p-1.5 rounded-full bg-gray-50 group-hover:bg-primary/10 transition-colors">
-                      {getLinkIcon(store.linkType)}
+        {/* Store Grid with Framer Motion Layout Animation */}
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredStores.map((store) => {
+              const hasLink = !!store.url;
+              const cardInner = (
+                <div
+                  className={`p-4 rounded-xl border transition-all duration-300 flex items-center justify-between gap-3 h-full ${
+                    hasLink
+                      ? "bg-white hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5 border-gray-200/90 cursor-pointer group"
+                      : "bg-gray-50/80 border-gray-200 text-gray-400"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-transform group-hover:scale-110 ${
+                        store.number === 25
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-primary/10 text-primary"
+                      }`}
+                    >
+                      {store.number}
                     </span>
-                    <ExternalLink
-                      size={14}
-                      className="text-gray-300 group-hover:text-primary transition-colors"
-                    />
+                    <span
+                      className={`text-sm font-medium truncate ${
+                        hasLink
+                          ? "text-gray-800 group-hover:text-primary transition-colors"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      {store.name}
+                    </span>
                   </div>
-                )}
-              </div>
-            );
 
-            return hasLink ? (
-              <a
-                key={store.number}
-                href={store.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`${store.name} の公式リンクを開く`}
-              >
-                {content}
-              </a>
-            ) : (
-              <div key={store.number}>{content}</div>
-            );
-          })}
-        </div>
+                  {hasLink && (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="p-1.5 rounded-full bg-gray-50 group-hover:bg-primary/10 transition-colors">
+                        {getLinkIcon(store.linkType)}
+                      </span>
+                      <ExternalLink
+                        size={14}
+                        className="text-gray-400 group-hover:text-primary opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+
+              return (
+                <motion.div
+                  layout
+                  key={store.number}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {hasLink ? (
+                    <a
+                      href={store.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block h-full focus:outline-none"
+                    >
+                      {cardInner}
+                    </a>
+                  ) : (
+                    cardInner
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );

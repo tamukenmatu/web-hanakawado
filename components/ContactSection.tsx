@@ -136,12 +136,17 @@ export default function ContactSection() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3.5 px-6 rounded-xl bg-primary hover:bg-primary-dark text-white font-medium shadow-md shadow-primary/25 hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 group"
+                  className="relative w-full py-4 px-6 rounded-xl bg-primary hover:bg-primary/90 text-white font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 flex items-center justify-center gap-2 group overflow-hidden active:scale-[0.99]"
                 >
-                  <span>送信する</span>
+                  {/* シマー（光が走るアニメーション） */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
+                  <span className="tracking-wider text-sm font-semibold">
+                    メッセージを送信する
+                  </span>
                   <Send
                     size={16}
-                    className="transition-transform group-hover:translate-x-1"
+                    className="transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-0.5"
                   />
                 </button>
               </div>

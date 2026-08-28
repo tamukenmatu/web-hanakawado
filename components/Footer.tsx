@@ -50,12 +50,15 @@ export default function Footer() {
 
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
           <p>© {new Date().getFullYear()} Hanakawado Sukeroku Shotengai. All Rights Reserved.</p>
-          <div className="flex gap-6">
+          <div className="flex gap-6 items-center">
             <a href="#contact" className="hover:underline">
               お問い合わせ
             </a>
             <a href="#" className="hover:underline">
               プライバシーポリシー
+            </a>
+            <a href="/admin" className="text-gray-600 hover:text-sky-400 transition-colors">
+              管理パネル
             </a>
           </div>
         </div>
