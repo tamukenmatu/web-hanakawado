@@ -57,3 +57,16 @@
 
 ### 3.2 アセット管理
 * 画像は `public/` 配下（`assets/`, `usershare/`, `sakura/` 等）に配置し、Next.js 静的エクスポート（`unoptimized: true`）に適したパス設計を維持すること。
+
+<!-- === RPROXY TOOL SEARCH HARNESS: START === -->
+## 2. Local Machine Tools & Capabilities
+```yaml
+local_tool_search:
+  policy: "推論や不要な新規パッケージインストール（npm/pip等）を禁止し、確定的なローカルCLIを使用すること"
+  command: "tool-search"
+  usage:
+    lookup_by_keyword: "tool-search [keyword]"
+    list_active_tools: "tool-search"
+  description: "用途・カテゴリ・キーワードから利用可能なローカルCLIと日本語用途を逆引き"
+```
+<!-- === RPROXY TOOL SEARCH HARNESS: END === -->
