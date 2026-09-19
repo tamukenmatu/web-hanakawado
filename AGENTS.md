@@ -26,10 +26,10 @@
    * ビルド成功後、プロジェクトルートの `out/` ディレクトリに静的 HTML/JS/CSS/アセット群が出力されます。
 
 2. **Wrangler による Cloudflare Pages へのダイレクトデプロイ**:
-   Cloudflare API Token および Account ID を環境変数に指定して `wrangler pages deploy` を実行します。
+   Cloudflare API Token および Account ID を環境変数（または `.env`）に指定して `wrangler pages deploy` を実行します。
    ```bash
-   CLOUDFLARE_API_TOKEN="cfut_9mr9Bs9t2yCaO4hV8lJKM5Y1NbOXgiHbfrjgwK7907a01ab1" \
-   CLOUDFLARE_ACCOUNT_ID="d734eb575dcc832373d79065be4b7ab3" \
+   CLOUDFLARE_API_TOKEN="${CLOUDFLARE_API_TOKEN}" \
+   CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID}" \
    npx wrangler pages deploy "out" --project-name="web-hanakawado" --commit-dirty=true
    ```
 
